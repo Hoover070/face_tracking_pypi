@@ -38,8 +38,11 @@ frame_height = int(video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 out = cv2.VideoWriter('output.mp4', fourcc, 24, (frame_width, frame_height)) 
 
-# base directory of images
-base_dir = 'authorized_users/'
+'''base directory of images of authorized users
+to fit this for a security program, we would have to take pictures of the authorized users
+when they are registering their face and store them in the authorized_users directory
+under their name'''
+base_directory = 'authorized_users/'
 authorized_users = ["Obama", "Trump", "Biden", "Will"]
 
 # Load sample pictures and get face encodings
@@ -48,7 +51,7 @@ known_face_names = []
 
 # Load and encode faces from the images using preprocessing
 for person_name in authorized_users:
-    folder_path = os.path.join(base_dir, person_name.lower().replace(" ", "_"))
+    folder_path = os.path.join(base_directory, person_name.lower().replace(" ", "_"))
 
     # Load and encode faces from the images using preprocessing
     for image_file in os.listdir(folder_path):
@@ -104,7 +107,9 @@ while True:
 
             face_names.append(name) 
 
-            # put green if authorized, red if unauthorized/unknown
+            '''put green if authorized, red if unauthorized/unknown
+            this can be expanded to include access to files or whatever based off the name
+            for now, we will just print the name and whether they are authorized or not'''
             color = (0, 255, 0) if name in authorized_users else (0, 0, 255)
             authorization_status = "Authorized" if name in authorized_users else "Unauthorized"
             confidence_text = f"{confidence*100:.2f}% {authorization_status}"
