@@ -1,2 +1,7 @@
 # face_tracking_pypi
-facetracking and user recognition using a webcam 
+
+
+face tracking and user recognition from a video source for a fullsail university: Computer Vision class project
+
+
+January 2024
