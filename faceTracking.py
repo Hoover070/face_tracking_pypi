@@ -4,17 +4,17 @@ import face_recognition as fr
 import os
 
 def preprocess_image(image_path):
-    # Load image using face_recognition
+    # load image using face_recognition
     image = fr.load_image_file(image_path)
 
-    # Detect faces
+    # detect faces
     face_locations = fr.face_locations(image)
 
     if len(face_locations) == 1:
         top, right, bottom, left = face_locations[0]
         face_image = image[top:bottom, left:right]
 
-        # Convert to RGB (if needed)
+        # convert to RGB if greyscale
         face_image = cv2.cvtColor(face_image, cv2.COLOR_BGR2RGB)
 
         return face_image
@@ -23,20 +23,20 @@ def preprocess_image(image_path):
 
 
 
-# Load the pre-trained model and weights
+# load the pre-trained model and weights
 net = cv2.dnn.readNetFromCaffe('deploy.prototxt', 'res10_300x300_ssd_iter_140000_fp16.caffemodel')
 
-# Open video
+# open video
 video_capture = cv2.VideoCapture('videos/test_1.mp4')
 
-# Get input video properties
+# get input video properties
 frame_width = int(video_capture.get(cv2.CAP_PROP_FRAME_WIDTH))
 frame_height = int(video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
 
-# Define the codec and create VideoWriter object
+# define the codec(mp4) and create VideoWriter object
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-out = cv2.VideoWriter('output.mp4', fourcc, 24, (frame_width, frame_height)) 
+out = cv2.VideoWriter('output.mp4', fourcc, 24, (frame_width, frame_height)) #24 fps is smooth video
 
 '''base directory of images of authorized users
 to fit this for a security program, we would have to take pictures of the authorized users
@@ -45,36 +45,36 @@ under their name'''
 base_directory = 'authorized_users/'
 authorized_users = ["Obama", "Trump", "Biden", "Will"]
 
-# Load sample pictures and get face encodings
+# load sample pictures and get face encodings
 known_face_encodings = []
 known_face_names = []
 
-# Load and encode faces from the images using preprocessing
+
 for person_name in authorized_users:
     folder_path = os.path.join(base_directory, person_name.lower().replace(" ", "_"))
 
-    # Load and encode faces from the images using preprocessing
+    # load and encode faces from the images using preprocessing
     for image_file in os.listdir(folder_path):
         image_path = os.path.join(folder_path, image_file)
 
-        # Preprocess the image
+        # preprocess the image
         if os.path.isfile(image_path):
             processed_image = preprocess_image(image_path)
 
-            # If face was detected, add encoding to the list
+            # if face was detected, add encoding to the list
             if processed_image is not None:
                 person_face_encoding = fr.face_encodings(processed_image)
                 if person_face_encoding:  # Check if face was detected
                     known_face_encodings.append(person_face_encoding[0])
                     known_face_names.append(person_name)
 
-# Initialize variables
+# loop through the video
 while True:
     ret, frame = video_capture.read()
     if not ret:
         break
 
-    # Prepare the frame for processing
+    # get the frame dimensions
     (h, w) = frame.shape[:2]
     blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)), 1.0, (300, 300), (104.0, 177.0, 123.0))
     net.setInput(blob)
