@@ -110,8 +110,20 @@ while True:
             '''put green if authorized, red if unauthorized/unknown
             this can be expanded to include access to files or whatever based off the name
             for now, we will just print the name and whether they are authorized or not'''
-            color = (0, 255, 0) if name in authorized_users else (0, 0, 255)
-            authorization_status = "Authorized" if name in authorized_users else "Unauthorized"
+            color = (0,0,0)
+            if name in authorized_users: 
+                color = (0, 255, 0) 
+            else:
+                color = (0, 0, 255)
+
+            # determin the authorization status
+            authorization_status ="Unauthorized"
+            if name in authorized_users:
+                authorization_status = "Authorized"
+            else:
+                authorization_status = "Unauthorized"
+            
+            # put the confidence level and authorization status on top of the rectangle
             confidence_text = f"{confidence*100:.2f}% {authorization_status}"
 
             # draw the rectangle around the face
